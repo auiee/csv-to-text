@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>CSV to TXT Converter</title>
+</head>
+<body>
+    <input type="file" id="fileInput" accept=".csv">
+    <button id="convertButton">変換</button>
+    <a id="downloadLink" style="display:none">ダウンロード</a>
+
+    <script>
+        document.getElementById('convertButton').addEventListener('click', function() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    let csvContent = e.target.result;
+                    let txtContent = csvContent.replace(/,/g, ' ');
+
+                    const blob = new Blob([txtContent], { type: 'text/plain' });
+                    const originalFileName = file.name.replace(/\.csv$/i, ''); // 拡張子を取り除く
+                    const newFileName = `${originalFileName} - txt.txt`; // 新しいファイル名
+
+                    const url = URL.createObjectURL(blob);
+                    const downloadLink = document.getElementById('downloadLink');
+                    downloadLink.href = url;
+                    downloadLink.download = newFileName; // 新しいファイル名を設定
+                    downloadLink.style.display = 'block';
+                    downloadLink.innerText = 'TXTファイルをダウンロード';
+                };
+                reader.readAsText(file);
+            } else {
+                alert('CSVファイルを選択してください。');
+            }
+        });
+    </script>
+</body>
+</html>
